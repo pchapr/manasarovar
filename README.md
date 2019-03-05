@@ -19,4 +19,8 @@
 * Python
 * ML Algorithms
 
-: +1:
+
+:+1: 
+
+:sparkles: :camel: :tada:
+:rocket: :metal: :octocat: 
