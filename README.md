@@ -9,6 +9,9 @@
 
 ## Cloud
 * AWS
+  1. IAM - Identity & Access Management
+  2. S3 - Simple Storage Service
+  3. 
 * Docker
 * Kubernetes
 
@@ -16,3 +19,4 @@
 * Python
 * ML Algorithms
 
+:#1:
