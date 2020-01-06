@@ -1,0 +1,23 @@
+{
+  "name": "javascript",
+  "version": "1.0.0",
+  "description": "Learning Javascript Language",
+  "main": "languagelearning.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pchapr/manasarovar.git"
+  },
+  "keywords": [
+    "JavaScript",
+    "Learning"
+  ],
+  "author": "Praveen Chappidi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pchapr/manasarovar/issues"
+  },
+  "homepage": "https://github.com/pchapr/manasarovar#readme"
+}
