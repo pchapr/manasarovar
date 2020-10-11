@@ -17,6 +17,9 @@ plugins {
 repositories {
     // Use jcenter for resolving dependencies.
     // You can declare any Maven/Ivy/file repository here.
+    maven {
+        url = uri("http://plsysadm-ap59:8081/nexus/content/groups/public/")
+    }
     jcenter()
 }
 
