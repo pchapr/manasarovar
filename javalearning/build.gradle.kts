@@ -13,11 +13,11 @@ repositories {
 }
 
 dependencies {
-    compile ("com.google.googlejavaformat:google-java-format:1.9")
+    compile("com.google.googlejavaformat:google-java-format:1.9")
     testImplementation("junit:junit:4.13")
     //testCompile("junit", "junit", "4.12")
 }
 
 configure<JavaPluginConvention> {
-    sourceCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_11
 }

@@ -4,12 +4,13 @@
 
 package learning.language.features.collections;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * TODO: Class Doc
+ * Why do we call Streams as lazy in Java
  *
  * @author Praveen Chappidi
  */
@@ -30,6 +31,17 @@ public class StreamsLazy {
         studentStream.collect(Collectors.toList());
 
         System.out.println("######## Ending the execution of lazyIntermediateOperations() ######## ");
+    }
+
+
+    public static void main(String... args) {
+        String[] studentArray = {"Student One", "Student Two", "Student Three"};
+        List<String> students = Arrays.asList(studentArray);
+        try {
+            StreamsLazy.lazyIntermediateOperations(students);
+        } catch (InterruptedException oops) {
+            oops.printStackTrace();
+        }
     }
 
 }
