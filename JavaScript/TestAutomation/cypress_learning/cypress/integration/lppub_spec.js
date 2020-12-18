@@ -14,12 +14,43 @@ describe('Loan Performance Publication', () => {
     })
 
     it('Login Successful', function () {
+        cy.intercept({
+            method: 'GET',
+            url: '*getPortfolioList.json*'
+        }).as('downloadPortfolioList')
         cy.url().should('include', 'Portfolio')
+        cy.contains('Loan Performance Data')
+        cy.get('a[href="#Portfolio"]').should('have.length', 1).should('have.attr', 'title', 'Portfolio')
+        cy.get('a[href="#Portfolio"]').within(() =>{
+            cy.get('span').should('have.text', 'Home')
+        })
+        cy.wait('@downloadPortfolioList').then(intercept => {
+            assert(intercept.response.statusCode == 200, "Requests for userdownloaded portfolio data is successful")
+        })
     });
 
     it('Single Family Page Load', function () {
-        cy.get('a[href="#Single-Family_Loan_Performance_Data_Files"]').click()
-        cy.wait(300)
+        cy.get('a[href="#Single-Family_Loan_Performance_Data_Files"]').should('be.visible')
+        cy.get('a[href="#Single-Family_Loan_Performance_Data_Files"]').then(($a) => {
+            const linkVal = $a.attr('href')
+            cy.visit(linkVal)
+        })
+        cy.intercept({
+            method: 'GET',
+            url: '*getSingleDownloadJson.json*'
+        }).as('downloadSFData')
+        cy.intercept({
+            method: 'GET',
+            url: '*getHarpDownloadJson.json*'
+        }).as('downloadSFHARPData')
+        cy.intercept({
+            method: 'GET',
+            url: '*getMonthlyDownloadJson.json*'
+        }).as('downloadSFMonthlyData')
+        cy.wait(['@downloadSFData', '@downloadSFHARPData', '@downloadSFMonthlyData']).then((interceptions) => {
+            console.log(interceptions.length)
+            interceptions.forEach(intercept => {assert(intercept.response.statusCode == 200, "Requests for Data are successful")})
+        })
         cy.get('div#Single-Family_Loan_Performance_Data_Files').within(() => {
           cy.contains('Single-Family Loan Performance Data Files')
         })
@@ -27,7 +58,22 @@ describe('Loan Performance Publication', () => {
 
     it('Single Family Page Dataset Validation', function () {
         cy.get('a[href="#Single-Family_Loan_Performance_Data_Files"]').click()
-        cy.wait(300)
+        cy.intercept({
+            method: 'GET',
+            url: '*getSingleDownloadJson.json*'
+        }).as('downloadSFData')
+        cy.intercept({
+            method: 'GET',
+            url: '*getHarpDownloadJson.json*'
+        }).as('downloadSFHARPData')
+        cy.intercept({
+            method: 'GET',
+            url: '*getMonthlyDownloadJson.json*'
+        }).as('downloadSFMonthlyData')
+        cy.wait(['@downloadSFData', '@downloadSFHARPData', '@downloadSFMonthlyData']).then((interceptions) => {
+            console.log(interceptions.length)
+            interceptions.forEach(intercept => {assert(intercept.response.statusCode == 200, "Requests for Data are successful")})
+        })
         cy.get('table[id="singledownloaddata"]').should('have.length', 1)
         cy.get('table[id="singledownloaddata"]').within(() => {
             cy.get('tr[id=1]').should('have.length', 1)
@@ -54,7 +100,22 @@ describe('Loan Performance Publication', () => {
 
     it('Single Family Loan Performance Data Validation', () => {
         cy.get('a[href="#Single-Family_Loan_Performance_Data_Files"]').click()
-        cy.wait(300)
+        cy.intercept({
+            method: 'GET',
+            url: '*getSingleDownloadJson.json*'
+        }).as('downloadSFData')
+        cy.intercept({
+            method: 'GET',
+            url: '*getHarpDownloadJson.json*'
+        }).as('downloadSFHARPData')
+        cy.intercept({
+            method: 'GET',
+            url: '*getMonthlyDownloadJson.json*'
+        }).as('downloadSFMonthlyData')
+        cy.wait(['@downloadSFData', '@downloadSFHARPData', '@downloadSFMonthlyData']).then((interceptions) => {
+            console.log(interceptions.length)
+            interceptions.forEach(intercept => {assert(intercept.response.statusCode == 200, "Requests for Data are successful")})
+        })
         cy.get('div[id="gbox_downloadmonthly"]').within(() => {
             cy.get('span[class="ui-jqgrid-title"]').should('have.text', 'Quarterly Single-Family Loan Performance (Primary) Dataset')
             cy.get('table[class="ui-jqgrid-htable"]').within(() => {
@@ -90,7 +151,7 @@ describe('Loan Performance Publication', () => {
                 let numberOfYears = getNumberOfDisclosureYears()
                 cy.get('tr').should('have.length', numberOfYears)
                 let currentYear = getCurrentYear();
-                let disQuarter = getCurrentQuarter();
+                let currQuarter = getCurrentQuarter();
                 let rowNumber = 0;
                 for (let disYear = getDisclosureStartYear(); disYear <= getCurrentYear(); disYear++) {
                     let q1FileStr = disYear + 'Q1.zip'
@@ -102,59 +163,53 @@ describe('Loan Performance Publication', () => {
                     let q3OnclickStr = 'javascript:window.location.href=\'publish_aws?file=' + q3FileStr + '\'; $(\'#downloadmonthly\').jqGrid().trigger(\'reloadGrid\'); '
                     let q4OnclickStr = 'javascript:window.location.href=\'publish_aws?file=' + q4FileStr + '\'; $(\'#downloadmonthly\').jqGrid().trigger(\'reloadGrid\'); '
                     cy.get('tr[role="row"]').eq(rowNumber).should('have.attr', 'id', disYear)
-                    if (disYear != currentYear) {
-                        cy.get('tr[role="row"]').eq(rowNumber).within(() => {
-                            cy.get('td[role="gridcell"]').eq(0).should('have.text', disYear)
-                            cy.get('td[role="gridcell"]').eq(1)
-                                .contains('a').should('have.text', 'Acquisition and Performance')
-                                .should('have.attr', 'onclick', q1OnclickStr)
-                            cy.get('td[role="gridcell"]').eq(2)
-                                .contains('a').should('have.text', 'Acquisition and Performance').should('have.attr', 'onclick', q2OnclickStr)
-                            cy.get('td[role="gridcell"]').eq(3)
-                                .contains('a').should('have.text', 'Acquisition and Performance').should('have.attr', 'onclick', q3OnclickStr)
-                            cy.get('td[role="gridcell"]').eq(4)
-                                .contains('a').should('have.text', 'Acquisition and Performance').should('have.attr', 'onclick', q4OnclickStr)
-                        })
+                    let quatersPublished = 0
+                    if(disYear < (currentYear-1)) {
+                        quatersPublished = 4;
                     } else {
-                        cy.get('tr[role="row"]').eq(rowNumber).within(() => {
-                            cy.get('td[role="gridcell"]').eq(0).should('have.text', disYear)
-                            if (disQuarter == 0) {
+                        if(disYear == (currentYear-1)){
+                            if(currQuarter == 1) {
+                                quatersPublished = 2
+                            } else if(currQuarter == 2) {
+                                quatersPublished = 3
+                            } else if(currQuarter >= 3) {
+                                quatersPublished = 4
+                            }
+                        } else if(disYear == currentYear){
+                            quatersPublished = (currQuarter < 2 ? 0 : currQuarter-2)
+                        }
+                    }
+                    cy.get('tr[role="row"]').eq(rowNumber).within(() => {
+                        cy.get('td[role="gridcell"]').eq(0).should('have.text', disYear)
+                        switch (quatersPublished) {
+                            case 1:
                                 cy.get('td[role="gridcell"]').eq(1)
                                     .contains('a').should('have.text', 'Acquisition and Performance')
                                     .should('have.attr', 'onclick', q1OnclickStr)
                                 cy.get('td[role="gridcell"]').eq(2).should('have.text', 'Not Available')
                                 cy.get('td[role="gridcell"]').eq(3).should('have.text', 'Not Available')
                                 cy.get('td[role="gridcell"]').eq(4).should('have.text', 'Not Available')
-                            } else if (disQuarter == 1) {
+                                break
+                            case 2:
                                 cy.get('td[role="gridcell"]').eq(1)
                                     .contains('a').should('have.text', 'Acquisition and Performance')
                                     .should('have.attr', 'onclick', q1OnclickStr)
                                 cy.get('td[role="gridcell"]').eq(2)
-                                    .contains('a').should('have.text', 'Acquisition and Performance')
-                                    .should('have.attr', 'onclick', q2OnclickStr)
+                                    .contains('a').should('have.text', 'Acquisition and Performance').should('have.attr', 'onclick', q2OnclickStr)
                                 cy.get('td[role="gridcell"]').eq(3).should('have.text', 'Not Available')
                                 cy.get('td[role="gridcell"]').eq(4).should('have.text', 'Not Available')
-                            } else if (disQuarter == 2) {
+                                break
+                            case 3:
                                 cy.get('td[role="gridcell"]').eq(1)
                                     .contains('a').should('have.text', 'Acquisition and Performance')
                                     .should('have.attr', 'onclick', q1OnclickStr)
                                 cy.get('td[role="gridcell"]').eq(2)
-                                    .contains('a').should('have.text', 'Acquisition and Performance')
-                                    .should('have.attr', 'onclick', q2OnclickStr)
-                                cy.get('td[role="gridcell"]').eq(3).should('have.text', 'Not Available')
-                                cy.get('td[role="gridcell"]').eq(4).should('have.text', 'Not Available')
-                            } else if (disQuarter == 3) {
-                                cy.get('td[role="gridcell"]').eq(1)
-                                    .contains('a').should('have.text', 'Acquisition and Performance')
-                                    .should('have.attr', 'onclick', q1OnclickStr)
-                                cy.get('td[role="gridcell"]').eq(2)
-                                    .contains('a').should('have.text', 'Acquisition and Performance')
-                                    .should('have.attr', 'onclick', q2OnclickStr)
+                                    .contains('a').should('have.text', 'Acquisition and Performance').should('have.attr', 'onclick', q2OnclickStr)
                                 cy.get('td[role="gridcell"]').eq(3)
-                                    .contains('a').should('have.text', 'Acquisition and Performance')
-                                    .should('have.attr', 'onclick', q3OnclickStr)
+                                    .contains('a').should('have.text', 'Acquisition and Performance').should('have.attr', 'onclick', q3OnclickStr)
                                 cy.get('td[role="gridcell"]').eq(4).should('have.text', 'Not Available')
-                            } else {
+                                break
+                            case 4:
                                 cy.get('td[role="gridcell"]').eq(1)
                                     .contains('a').should('have.text', 'Acquisition and Performance')
                                     .should('have.attr', 'onclick', q1OnclickStr)
@@ -164,25 +219,58 @@ describe('Loan Performance Publication', () => {
                                     .contains('a').should('have.text', 'Acquisition and Performance').should('have.attr', 'onclick', q3OnclickStr)
                                 cy.get('td[role="gridcell"]').eq(4)
                                     .contains('a').should('have.text', 'Acquisition and Performance').should('have.attr', 'onclick', q4OnclickStr)
-                            }
-                        })
-                    }
+                                break
+                        }
+                    })
                     rowNumber++
                 }
             })
         })
 
     })
+
+    it('Multifamily Page Load', function () {
+        cy.get('a[href="#Multifamily_Loan_Performance_Data_Files"]').click()
+        cy.wait(300)
+        cy.get('div#Multifamily_Loan_Performance_Data_Files').within(() => {
+            cy.contains('Multifamily Loan Performance Data Files')
+        })
+    });
+
+    it('Multifamily Data Validation', function () {
+        cy.get('a[href="#Multifamily_Loan_Performance_Data_Files"]').click()
+        cy.intercept({
+            method: 'GET',
+            url: '*getMFDownloadJson.json*'
+        }).as('downloadMFData')
+        cy.wait('@downloadMFData').then(intercept => {
+            assert(intercept.response.statusCode == 200, "Rest call for MFData is successful")
+        })
+        cy.get('table[id="mfdownloaddata"]').should('have.length', 1)
+        cy.get('table[id="mfdownloaddata"').within(() => {
+            cy.get('tr[role="row"]').eq(0).within(() => {
+                cy.get('td[role="gridcell"]').should('have.attr', 'title', 'Multifamily Loan Performance Data')
+                cy.get('td[role="gridcell"]').within(() => {
+                    cy.get('b').should('have.text', 'Multifamily Loan Performance Data')
+                })
+            })
+            cy.get('tr[role="row"]').eq(1).within(() => {
+                cy.get('td[role="gridcell"]').should('have.attr', 'title', 'Multifamily Loan Performance Data File')
+                cy.get('td[role="gridcell"]').within(() => {
+                    cy.get('a').should('have.text', 'Multifamily Loan Performance Data File')
+                        .should('have.attr', 'onclick', 'javascript:window.location.href=\'publish_aws?file=Multifamily.zip\'; $(\'#singledownloaddata\').jqGrid().trigger(\'reloadGrid\'); ')
+                })
+            })
+        })
+    });
+
+
 })
 
 function getCurrentQuarter() {
     var month = new Date().getMonth() + 1;
     var quarter = Math.ceil(month / 3);
-    var disQuarter = quarter - 2;
-    if (disQuarter < 0) {
-        return 0;
-    }
-    return disQuarter;
+    return quarter;
 }
 
 function getCurrentYear() {
