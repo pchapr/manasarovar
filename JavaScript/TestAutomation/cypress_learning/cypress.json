@@ -1,3 +1,4 @@
 {
-  "baseUrl": "https://loanperformancedata.fanniemae.com/lppub/"
+  "baseUrl": "https://datadynamics.fanniemae.com/data-dynamics",
+  "chromeWebSecurity": true
 }
