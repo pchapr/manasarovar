@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module version="4">
-  <component name="sonarModuleSettings">
-    <option name="localAnalysisScripName" value="&lt;PROJECT&gt;" />
-    <option name="serverName" value="&lt;PROJECT&gt;" />
+  <component name="SonarLintModuleSettings">
+    <option name="uniqueId" value="b4e0f372-dc53-4b76-b5d7-1255cb5e23a8" />
   </component>
 </module>

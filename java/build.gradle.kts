@@ -12,24 +12,27 @@ plugins {
 
     // Apply the application plugin to add support for building a CLI application.
     application
+
+    id("project-report")
+    id("com.autonomousapps.dependency-analysis") version "2.+"
 }
 
 repositories {
     // Use jcenter for resolving dependencies.
     // You can declare any Maven/Ivy/file repository here.
-    maven {
-        url = uri("http://plsysadm-ap59:8081/nexus/content/groups/public/")
-    }
-    jcenter()
+//    maven {
+//        url = uri("http://plsysadm-ap59:8081/nexus/content/groups/public/")
+//    }
+    mavenCentral()
 }
 
 dependencies {
-    compile("org.projectlombok:lombok:1.18.10")
+    implementation("org.projectlombok:lombok:1.18.28")
 
-    annotationProcessor("org.projectlombok:lombok:1.18.10")
+    annotationProcessor("org.projectlombok:lombok:1.18.28")
 
     // This dependency is used by the application.
-    implementation("com.google.guava:guava:28.0-jre")
+    implementation("com.google.guava:guava:30.0-jre")
 
     // Use JUnit Jupiter API for testing.
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.5.1")
@@ -41,12 +44,44 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.5.1")
 }
 
-application {
-    // Define the main class for the application.
-    mainClassName = "learning.language.App"
-}
-
 val test by tasks.getting(Test::class) {
     // Use junit platform for unit tests
     useJUnitPlatform()
+}
+
+java {
+    // Set the Java version compatibility
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+
+// Dependency analysis configuration
+dependencyAnalysis {
+    issues {
+        all {
+            onAny {
+                severity("fail")
+            }
+            onUnusedDependencies {
+                exclude(
+                    // Add any dependencies you want to exclude from pruning
+                    "org.springframework.boot:spring-boot-starter-test"
+                )
+            }
+        }
+    }
+}
+
+tasks.named<HtmlDependencyReportTask>("htmlDependencyReport") {
+    reports {
+        html.required.set(true)
+    }
+}
+
+// Custom task to generate all reports
+tasks.register("generateReports") {
+    group = "reporting"
+    description = "Generates all project reports"
+    dependsOn("htmlDependencyReport", "dependencyReport", "propertyReport", "taskReport", "projectReport")
 }

@@ -1,6 +1,6 @@
 plugins {
-    id 'org.springframework.boot' version '2.2.2.RELEASE'
-    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id 'org.springframework.boot' version '2.5.4'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'org.asciidoctor.convert' version '1.5.8'
     id 'java'
 }
@@ -25,8 +25,8 @@ repositories {
 
 ext {
     set('snippetsDir', file("build/generated-snippets"))
-    set('springBootAdminVersion', "2.2.0")
-    set('springCloudVersion', "Hoxton.RELEASE")
+    set('springBootAdminVersion', "2.5.1")
+    set('springCloudVersion', "2020.0.3")
 }
 
 dependencies {

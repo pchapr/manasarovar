@@ -1,11 +1,10 @@
-/*******************************************************************************
- * Copyright (c) 2020. Fannie Mae. All rights reserved. Unpublished -- Rights reserved under the copyright laws of the United States and international conventions. Use of a copyright notice is precautionary only and does not imply publication or disclosure. This software contains confidential information and trade secrets of Fannie Mae. Use, disclosure, or reproduction is prohibited without the prior written consent of Fannie Mae.
- ******************************************************************************/
 
 package learning.language.features.collections;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -37,11 +36,25 @@ public class StreamsLazy {
     public static void main(String... args) {
         String[] studentArray = {"Student One", "Student Two", "Student Three"};
         List<String> students = Arrays.asList(studentArray);
-        try {
-            StreamsLazy.lazyIntermediateOperations(students);
-        } catch (InterruptedException oops) {
-            oops.printStackTrace();
-        }
+//        try {
+//            StreamsLazy.lazyIntermediateOperations(students);
+//        } catch (InterruptedException oops) {
+//            oops.printStackTrace();
+//        }
+        StreamsLazy.buildStringConcatination();
+    }
+
+
+    //given a map of String, String
+    //combine all the values of the map into a stringbuilder
+    public static void buildStringConcatination(){
+        Map<String, String> errorMap = new HashMap<>();
+        errorMap.put("Loan1", "Error String");
+        errorMap.put("Loan2", "Error String 2");
+
+        StringBuilder stringError = errorMap.values().stream().map(errorStr -> errorStr+" Append; ").collect(StringBuilder::new, StringBuilder::append, StringBuilder::append);
+
+        System.out.println(stringError.toString());
     }
 
 }

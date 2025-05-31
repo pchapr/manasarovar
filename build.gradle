@@ -1,0 +1,12 @@
+plugins {
+    // ...existing code...
+    id 'java'
+    // ...existing code...
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+// ...existing code...

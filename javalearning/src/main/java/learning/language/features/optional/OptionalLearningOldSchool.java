@@ -1,6 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2020. Fannie Mae. All rights reserved. Unpublished -- Rights reserved under the copyright laws of the United States and international conventions. Use of a copyright notice is precautionary only and does not imply publication or disclosure. This software contains confidential information and trade secrets of Fannie Mae. Use, disclosure, or reproduction is prohibited without the prior written consent of Fannie Mae.
- ******************************************************************************/
 
 package learning.language.features.optional;
 
@@ -29,7 +26,7 @@ public class OptionalLearningOldSchool {
         //Code to avoid null pointer exception
         List<Loan> associatedLoans = commitment.getAssociatedLoans();
 
-        if(associatedLoans != null && associatedLoans.size() > 0) {
+        if(associatedLoans != null && !associatedLoans.isEmpty()) {
             String loanNumber = commitment.getAssociatedLoans().get(0).getLoanNumbers();
             System.out.format("Loan Number: %s", loanNumber);
         }
